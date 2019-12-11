@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Ball</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+</head>
+<script src="./stats.js"></script>
+
+<body>
+  <canvas id="canvas"></canvas>
+</body>
+<script>
+  let _this
+  let stats = new Stats();
+  stats.setMode(0);
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.right = '0px';
+  stats.domElement.style.top = '0px';
+  document.body.appendChild(stats.domElement);
+  class CachBallRender {
+    constructor(num) {
+      this.BallList = [];
+      this.num = num;
+      this.canvasEl = document.getElementById("canvas");
+      this.ctx = this.canvasEl.getContext('2d');
+      this.canvasEl.width = window.innerWidth;
+      this.canvasEl.height = window.innerHeight;
+      _this = this
+    }
+    start() {
+      for (var i = 0; i < this.num; i++) {
+        let s = this.BallFun();
+        this.BallList.push(s)
+      }
+      this.loop()
+    }
+    move(i) {
+      _this.BallList[i].x = _this.BallList[i].x + _this.BallList[i].speed * .6
+      _this.BallList[i].y = _this.BallList[i].y + _this.BallList[i].speed;
+      if (_this.BallList[i].x > _this.canvasEl.width + 20) {
+        _this.BallList[i].x = -20;
+        _this.BallList[i].y = this.canvasEl.height - this.BallList[i].y;
+      }
+      if (_this.BallList[i].y > _this.canvasEl.height + 20) {
+        _this.BallList[i].y = -20;
+        _this.BallList[i].x = this.canvasEl.width - this.BallList[i].x;
+      }
+      _this.paint(_this.BallList[i].el, _this.BallList[i].x, _this.BallList[i].y)
+    }
+    loop() {
+      _this.ctx.clearRect(0, 0, _this.canvasEl.width, _this.canvasEl.height);
+      for (var i = 0; i < _this.num; i++) {
+        _this.move(i)
+      }
+      stats.update();
+      window.requestAnimationFrame(_this.loop)
+    }
+    randomColor() {
+      const r = Math.floor(Math.random() * 255);
+      const g = Math.floor(Math.random() * 255);
+      const b = Math.floor(Math.random() * 255);
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+    BallFun() {
+      const cachCanvas = document.createElement('canvas');
+      const cachCtx = cachCanvas.getContext('2d');
+      // document.body.appendChild( cachCanvas)
+      cachCanvas.width = 20;
+      cachCanvas.height = 20;
+      const speed = Math.random() + .5;
+      const x = Math.random() * this.canvasEl.width;
+      const y = Math.random() * this.canvasEl.height;
+      for (let i = 4; i > 0; i--) {
+        cachCtx.beginPath();
+        cachCtx.fillStyle = this.randomColor();
+        cachCtx.arc(10, 10, i * 2, 0, 2 * Math.PI);
+        cachCtx.fill();
+        cachCtx.closePath()
+      }
+      return {
+        el: cachCanvas,
+        speed,
+        x,
+        y,
+      }
+    }
+    paint(el, x, y) {
+      this.ctx.drawImage(el, x, y)
+    }
+  }
+  class BallRender {
+    constructor(num) {
+      this.BallList = [];
+      this.num = num;
+      this.canvasEl = document.getElementById("canvas");
+      this.ctx = this.canvasEl.getContext('2d');
+      this.canvasEl.width = window.innerWidth;
+      this.canvasEl.height = window.innerHeight;
+      _this = this
+    }
+    start() {
+      for (var i = 0; i < this.num; i++) {
+        let s = this.BallFun();
+        this.BallList.push(s)
+      }
+      this.loop()
+    }
+    move(i) {
+      _this.BallList[i].x = _this.BallList[i].x + _this.BallList[i].speed * .6
+      _this.BallList[i].y = _this.BallList[i].y + _this.BallList[i].speed;
+      if (_this.BallList[i].x > _this.canvasEl.width + 5) {
+        _this.BallList[i].x = -5;
+        _this.BallList[i].y = this.canvasEl.height - this.BallList[i].y;
+      }
+      if (_this.BallList[i].y > _this.canvasEl.height + 5) {
+        _this.BallList[i].y = -5;
+        _this.BallList[i].x = this.canvasEl.width - this.BallList[i].x;
+      }
+      _this.paint(_this.BallList[i].x, _this.BallList[i].y, i)
+    }
+    loop() {
+      _this.ctx.clearRect(0, 0, _this.canvasEl.width, _this.canvasEl.height);
+      for (let i = 0; i < _this.num; i++) {
+        _this.move(i)
+      }
+      stats.update();
+      window.requestAnimationFrame(_this.loop)
+    }
+    randomColor() {
+      const r = Math.floor(Math.random() * 255);
+      const g = Math.floor(Math.random() * 255);
+      const b = Math.floor(Math.random() * 255);
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+    BallFun() {
+      const cachCanvas = document.createElement('canvas');
+      const cachCtx = cachCanvas.getContext('2d');
+      // document.body.appendChild( cachCanvas)
+      cachCanvas.width = 10;
+      cachCanvas.height = 10;
+      const speed = Math.random() + .5;
+      const x = Math.random() * this.canvasEl.width;
+      const y = Math.random() * this.canvasEl.height;
+      const color = [this.randomColor(), this.randomColor(), this.randomColor(), this.randomColor()]
+      return {
+        speed,
+        x,
+        y,
+        color
+      }
+    }
+
+    paint(x, y, m) {
+      for (let i = 4; i > 0; i--) {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = _this.BallList[m].color[i];
+        // this.ctx.translate(Math.random(), Math.random());
+        // this.ctx.scale(Math.random() + .5, Math.random() + .5);
+        // this.ctx.rotate(Math.PI * .2);
+        this.ctx.arc(x, y, i * 2, 0, 2 * Math.PI);
+        this.ctx.fill();
+        this.ctx.closePath()
+      }
+    }
+  }
+  // const ballRender = new BallRender(1000);
+  //将绘制的球缓存起来，能少调用canvas的api，因此比上一个没缓存的方法流畅很多
+  const ballRender = new CachBallRender(1000);
+  ballRender.start()
+</script>
+
+</html>
